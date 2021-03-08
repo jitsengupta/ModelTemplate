@@ -22,21 +22,21 @@ package edu.fiu.sysdesign;
  */
 public class SelfCheckUtils {
 	
-	public static final String ANSI_RESET = "\u001B[0m";
-	public static final String ANSI_BLACK = "\u001B[30m";
-	public static final String ANSI_RED = "\u001B[31m";
-	public static final String ANSI_GREEN = "\u001B[32m";
-	public static final String ANSI_YELLOW = "\u001B[33m";
-	public static final String ANSI_BLUE = "\u001B[34m";
-	public static final String ANSI_PURPLE = "\u001B[35m";
-	public static final String ANSI_CYAN = "\u001B[36m";
-	public static final String ANSI_WHITE = "\u001B[37m";
+	/** reset color */ public static final String ANSI_RESET = "\u001B[0m"; 
+	/** ansi black */ public static final String ANSI_BLACK = "\u001B[30m"; 
+	/** ansi red */ public static final String ANSI_RED = "\u001B[31m"; 
+	/** ansi green */ public static final String ANSI_GREEN = "\u001B[32m"; 
+	/** ansi yellow */ public static final String ANSI_YELLOW = "\u001B[33m"; 
+	/** ansi blue */ public static final String ANSI_BLUE = "\u001B[34m"; 
+	/** ansi purple */ public static final String ANSI_PURPLE = "\u001B[35m";
+	/** ansi cyan */ public static final String ANSI_CYAN = "\u001B[36m"; 
+	/** ansi white */ public static final String ANSI_WHITE = "\u001B[37m"; 
 
 	/**
 	 * Just for testing items in this class. Make sure your application
 	 * does not use this main method for running your own applications!
 	 * 
-	 * @param args
+	 * @param args n/a
 	 */
 	public static void main(String[] args) {
 		SelfCheckCapable item1 = new SelfCheckCapable() {

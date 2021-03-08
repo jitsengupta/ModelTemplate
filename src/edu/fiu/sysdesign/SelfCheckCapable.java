@@ -31,7 +31,7 @@ public interface SelfCheckCapable {
 	 * Any object that is self-check capable must implement this method to 
 	 * check itself and any internal components.
 	 * 
-	 * @see SelfCheckUtils.demoCheck for a simple random check function, 
+	 * @see SelfCheckUtils#randomCheck() for a simple random check function, 
 	 * as well as to apply checks on a list of items as needed.
 	 * 
 	 * @return true if the self-check was successful, false otherwise.
