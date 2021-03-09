@@ -86,7 +86,7 @@ public class SelfCheckUtils {
 				count++;
 				result &= basicSelfCheckRunner((SelfCheckCapable)i);
 			} else if (i instanceof List) {
-				for (Object l:(List)i) {
+				for (Object l:(List<?>)i) {
 					if (l instanceof SelfCheckCapable) {
 						count++;
 						result &= basicSelfCheckRunner((SelfCheckCapable)l);
@@ -149,7 +149,11 @@ public class SelfCheckUtils {
 	 *
 	 */
 	private static class SimpleComponent implements SelfCheckCapable {
-		String name;
+		/** name of the component */ String name;
+		/**
+		 * Simple constructor to create a component
+		 * @param name name of the component
+		 */
 		public SimpleComponent(String name) {
 			this.name = name;
 		}
