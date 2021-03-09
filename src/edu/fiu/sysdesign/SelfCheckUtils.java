@@ -12,12 +12,15 @@
  */
 package edu.fiu.sysdesign;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This will essentially be a class of Static methods that you can 
  * use to test anything in your own classes. I will be adding more
  * features to this as time goes on.
  * 
- * @author asengupt
+ * @author asengupt (Arijit Sengupta - FIU)
  *
  */
 public class SelfCheckUtils {
@@ -39,28 +42,21 @@ public class SelfCheckUtils {
 	 * @param args n/a
 	 */
 	public static void main(String[] args) {
-		SelfCheckCapable item1 = new SelfCheckCapable() {
-			
-			@Override
-			public boolean selfCheck() {
-				// TODO Auto-generated method stub
-				return SelfCheckUtils.randomCheck(0.25);
-			}
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "Test component";
-			}
-		};
+		SelfCheckCapable item1 = new SimpleComponent("Test component 1");
+		SelfCheckCapable item2 = new SimpleComponent("Test component 2");
+		List<SimpleComponent> l1 = new ArrayList<SimpleComponent>();
+		l1.add(new SimpleComponent("Test component 3"));
+		l1.add(new SimpleComponent("Test component 4"));
+		l1.add(new SimpleComponent("Test component 5"));
+		l1.add(new SimpleComponent("Test component 6"));
+		l1.add(new SimpleComponent("Test component 7"));
 		
-		System.out.println(SelfCheckUtils.basicSelfCheckRunner(item1));
-
+		checkComponents(item1, item2, l1);
 	}
 	
 	/**
-	 * Runs a self-check and returns a prettified version of the result
-	 * Note that the colors may not show correctly in some shells.
+	 * Runs a self-check and pretty-print the result of the check.
+	 * Note that the colors may not show correctly in some terminals.
 	 * 
 	 * DO NOT USE THIS AS THE ACTUAL SELF-CHECK! This will call self-check
 	 * of the item passed in, so if you call it from the self-check method
@@ -69,17 +65,38 @@ public class SelfCheckUtils {
 	 * @param item the item to be tested
 	 * @return the colorized version of the run. Colors may not show in all terminals
 	 */
-	public static String basicSelfCheckRunner(SelfCheckCapable item) {
-		if (System.console() != null && System.getenv().get("TERM") != null) {
-			return "Checking " + item.getName() + "... " +
-					(item.selfCheck() ? ANSI_GREEN + "check ok" + ANSI_RESET
-							: ANSI_RED + "FAILED!" + ANSI_RESET);
-		} else {
-			return "Checking " + item.getName() + "... " +
-					(item.selfCheck() ? "check ok" : "FAILED!");
-		}
+	public static boolean basicSelfCheckRunner(SelfCheckCapable item) {
+		boolean result = item.selfCheck();
+		System.out.println("Checking " + item.getComponentName() + "... " + prettify(result));
+		return result;
 	}
 
+	/**
+	 * A basic checkComponents method that tests all componets that
+	 * are provided as parameters.
+	 * @param items A comma separated list of items - can be any object, but
+	 * only those that implement SelfCheckCapable will be tested
+	 * @return a single boolean result telling you if the final test was successful
+	 */
+	public static boolean checkComponents(Object ...items) {
+		int count = 0;
+		boolean result = true;
+		for (Object i:items) {
+			if (i instanceof SelfCheckCapable) {
+				count++;
+				result &= basicSelfCheckRunner((SelfCheckCapable)i);
+			} else if (i instanceof List) {
+				for (Object l:(List)i) {
+					if (l instanceof SelfCheckCapable) {
+						count++;
+						result &= basicSelfCheckRunner((SelfCheckCapable)l);
+					}
+				}
+			}
+		}
+		System.out.println("Tested " + count + " components... " + prettify(count > 0 && result));
+		return (count > 0 && result);
+	}
 
 	/**
 	 * Super simple random check utility - simply calls a random function
@@ -102,13 +119,58 @@ public class SelfCheckUtils {
 	 * To call this, you can simply do a 
 	 * return SelfCheckUtils.randomCheck(0.25); // 25% chance of failure
 	 * 
-	 * @param probability - the probability of a failure - send as a 
+	 * @param failprobability - the probability of a failure - send as a 
 	 * value between 0 and 1. 1 means 100% probability of failure, 
 	 * 0 means it will always be successful.
 	 * @return true for half the cases, false otherwise
 	 */
-	public static boolean randomCheck(double probability) {
-		return Math.random() > probability; 
+	public static boolean randomCheck(double failprobability) {
+		return Math.random() > failprobability; 
+	}
+	
+	/**
+	 * An internal method to "prettify" the test result
+	 * If the test result is false, a red FAILED string is returned
+	 * If the test result is true, a green check ok string is returned
+	 * If terminal is not set, no colors are applied.
+	 * @param result the result of the self-check
+	 * @return prettified string (check ok / FAILED)
+	 */
+	private static String prettify(boolean result) {
+		if (System.console() != null && System.getenv().get("TERM") != null) {
+			return ( result ? ANSI_GREEN + "check ok" + ANSI_RESET
+							: ANSI_RED + "FAILED!" + ANSI_RESET);
+		} else return (result ? "check ok" : "FAILED!");
+	}
+	
+	/**
+	 * A simple internal class showing how to use the Self-check process
+	 * @author asengupt
+	 *
+	 */
+	private static class SimpleComponent implements SelfCheckCapable {
+		String name;
+		public SimpleComponent(String name) {
+			this.name = name;
+		}
+		
+		@Override
+		public boolean selfCheck() {
+			// TODO Auto-generated method stub
+			return SelfCheckUtils.randomCheck(0.1);
+		}
+		
+		@Override
+		public String getComponentName() {
+			// TODO Auto-generated method stub
+			return name;
+		}
+
+		@Override
+		public boolean runSelfCheck() {
+			// TODO Auto-generated method stub
+			return SelfCheckUtils.basicSelfCheckRunner(this);
+		}
 	}
 	
 }
