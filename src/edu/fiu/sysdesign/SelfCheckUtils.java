@@ -39,29 +39,52 @@ public class SelfCheckUtils {
 	 * Just for testing items in this class. Make sure your application
 	 * does not use this main method for running your own applications!
 	 * 
+	 * See examples of how to use the methods of this class.
+	 * 
 	 * @param args n/a
 	 */
 	public static void main(String[] args) {
 		SelfCheckCapable item1 = new SimpleComponent("Test component 1");
 		SelfCheckCapable item2 = new SimpleComponent("Test component 2");
-		List<SimpleComponent> l1 = new ArrayList<SimpleComponent>();
-		l1.add(new SimpleComponent("Test component 3"));
-		l1.add(new SimpleComponent("Test component 4"));
-		l1.add(new SimpleComponent("Test component 5"));
-		l1.add(new SimpleComponent("Test component 6"));
-		l1.add(new SimpleComponent("Test component 7"));
-		
-		checkComponents(item1, item2, l1);
+		SimpleComponent[] l1 = new SimpleComponent[5];
+		l1[0] =(new SimpleComponent("Test component 3"));
+		l1[1] =(new SimpleComponent("Test component 4"));
+		l1[2] =(new SimpleComponent("Test component 5"));
+		l1[3] =(new SimpleComponent("Test component 6"));
+		l1[4] = (new SimpleComponent("Test component 7"));
+
+		List<SimpleComponent> l2 = new ArrayList<SimpleComponent>();
+		l2.add(new SimpleComponent("Test component 8"));
+		l2.add(new SimpleComponent("Test component 9"));
+		l2.add(new SimpleComponent("Test component 10"));
+		l2.add(new SimpleComponent("Test component 11"));
+		checkComponents(item1, item2, l1, l2);
 	}
 	
 	/**
 	 * Runs a self-check and pretty-print the result of the check.
 	 * Note that the colors may not show correctly in some terminals.
 	 * 
-	 * DO NOT USE THIS AS THE ACTUAL SELF-CHECK! This will call self-check
+	 * DO NOT USE THIS AS THE ACTUAL SELF-CHECK method! 
+	 * This will call self-check method
 	 * of the item passed in, so if you call it from the self-check method
 	 * you will end up creating an infinite recursion!
 	 * 
+	 * However, this can be called from the runSelfCheck implementation
+	 * 
+	 * To use this, create an instance of an object that implements SelfCheckCapable
+	 * Then call this method from runSelfCheck (or elsewhere) as follows:
+	 * 
+	 * public class Test implements SelfCheckCapable ....
+	 * 
+	 * Test t = new new Test(...);
+	 * 
+	 * From outside the Test class: 
+	 *    SelfCheckUtils.basicSelfCheckRunner(t);
+	 *    
+	 * From inside the Test class (e.g. from runSelfCheck):
+	 *    SelfCheckUtils.basicSelfCheckRunner(this);
+	 *    
 	 * @param item the item to be tested
 	 * @return the colorized version of the run. Colors may not show in all terminals
 	 */
@@ -74,8 +97,16 @@ public class SelfCheckUtils {
 	/**
 	 * A basic checkComponents method that tests all componets that
 	 * are provided as parameters.
+	 * 
+	 * Again, do not use this from the selfCheck method, but can be used
+	 * from the runSelfCheck method to check all components in the class.
+	 * 
+	 * SelfCheckUtils.checkComponents(wheels, sensors, camera);
+	 * 
 	 * @param items A comma separated list of items - can be any object, but
-	 * only those that implement SelfCheckCapable will be tested
+	 * only those that implement SelfCheckCapable will be tested.
+	 * Supports Arrays of SelfCheckCapable objects
+	 * Supports Lists of SelfCheckCapable objects
 	 * @return a single boolean result telling you if the final test was successful
 	 */
 	public static boolean checkComponents(Object ...items) {
@@ -92,6 +123,13 @@ public class SelfCheckUtils {
 						result &= basicSelfCheckRunner((SelfCheckCapable)l);
 					}
 				}
+			} else if (i instanceof Object[]) {
+				for (Object l:(Object[])i) {
+					if (l instanceof SelfCheckCapable) {
+						count++;
+						result &= basicSelfCheckRunner((SelfCheckCapable)l);
+					}
+				}				
 			}
 		}
 		System.out.println("Tested " + count + " components... " + prettify(count > 0 && result));
